@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>Dashboard</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">	
+
+	<link rel="stylesheet" href="/static/dashboard.css">
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
+		<a class="navbar-brand" href="#"><i class="far fa-square fa-2x"></i></a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<ul class="navbar-nav d-flex ml-auto">
+				<li class="nav-item dropdown">
+					<a style="color:#fff;" class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Abhijit
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="#">Profile</a>
+						<a class="dropdown-item" href="#">Logout</a>						
+					</div>
+				</li>
+				<li>
+					<i style="color:#fff" class="fas fa-user-circle fa-2x"></i>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	
+	<div class="container-fluid bg-light">
+		<div class="row">
+			<nav class="col-md-3 bg-white sidebar">
+				<div>
+					<form class="mt-3">
+						<div class="form-group">
+						    <label for="input-phone"><i class="fas fa-phone"></i> Enter Customer Phone Number</label>
+						    <input type="phone" class="form-control" id="input-phone" placeholder="+19991234567">	
+					  	</div>
+						
+						<label><i class="fas fa-users"></i> Product Type</label>
+					  	<div id="coke-type" class="btn-group btn-group-toggle" data-toggle="buttons">
+						  <label class="border border-secondary btn btn-white radio-active">
+						    <input type="radio" name="coke_type" value="lime" id="option1" autocomplete="off" checked> Lime
+						  </label>
+						  <label class="border border-secondary btn btn-white">
+						    <input type="radio" name="coke_type" value="cherry" id="option2" autocomplete="off"> Cherry
+						  </label>
+						  <label class="border border-secondary btn btn-white">
+						    <input type="radio" name="coke_type" value="vanilla" id="option3" autocomplete="off"> Vanilla
+						  </label>
+						</div>
+						<br><br>
+						<div class="form-group">
+						    <label for="input-name"><i class="far fa-building"></i> Customer Name</label>
+						    <input type="phone" class="form-control" id="input-name" placeholder="Sarah">	
+					  	</div>
+						
+						<div style="text-align: center;">
+						  	<button type="submit" class="btn btn-orange">Send SMS</button>							
+						</div>
+					</form>
+				</div>				
+			</nav>
+			
+			<div class="col-md-8 ml-5 p-5 bg-white">
+				<p>First Automated Message</p>
+				<div class="card">
+				  <div class="card-body d-flex">
+				    {{ msg_ask }}
+				    <button type="button" class="btn btn-orange ml-auto">Edit</button>
+				  </div>
+				</div><br>
+
+				<p>If Positive Response <i class="far fa-smile"></i></p>
+				<div class="card">
+				  <div class="card-body d-flex">
+				    {{ pos_res }}
+				    <button type="button" class="btn btn-orange ml-auto">Edit</button>
+				  </div>
+				</div><br>
+
+				<p>If Negative Response <i class="far fa-frown"></i></p>
+				<div class="card">
+				  <div class="card-body d-flex">
+				    {{ neg_res }}
+				    <button type="button" class="btn btn-orange ml-auto">Edit</button>
+				  </div>
+				</div><br>
+			</div>
+		</div>
+
+	</div>
+	
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+
+	<script>		
+
+		$("#coke-type label").click(function() {
+			$("#coke-type label").removeClass("radio-active");
+			$(this).addClass("radio-active");
+		})
+
+	</script>
+</body>
+</html>
