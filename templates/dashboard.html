@@ -39,19 +39,19 @@
 					<form class="mt-3">
 						<div class="form-group">
 						    <label for="input-phone"><i class="fas fa-phone"></i> Enter Customer Phone Number</label>
-						    <input type="phone" class="form-control" id="input-phone" placeholder="+19991234567">	
+						    <input type="phone" class="form-control" id="input-phone" placeholder="+19991234567" autofocus>	
 					  	</div>
 						
 						<label><i class="fas fa-users"></i> Product Type</label>
-					  	<div id="coke-type" class="btn-group btn-group-toggle" data-toggle="buttons">
+					  	<div id="input-coke" class="btn-group btn-group-toggle" data-toggle="buttons">
 						  <label class="border border-secondary btn btn-white radio-active">
-						    <input type="radio" name="coke_type" value="lime" id="option1" autocomplete="off" checked> Lime
+						    <input type="radio" name="coke" value="lime" id="option1" autocomplete="off" checked> Lime
 						  </label>
 						  <label class="border border-secondary btn btn-white">
-						    <input type="radio" name="coke_type" value="cherry" id="option2" autocomplete="off"> Cherry
+						    <input type="radio" name="coke" value="cherry" id="option2" autocomplete="off"> Cherry
 						  </label>
 						  <label class="border border-secondary btn btn-white">
-						    <input type="radio" name="coke_type" value="vanilla" id="option3" autocomplete="off"> Vanilla
+						    <input type="radio" name="coke" value="vanilla" id="option3" autocomplete="off"> Vanilla
 						  </label>
 						</div>
 						<br><br>
@@ -61,7 +61,7 @@
 					  	</div>
 						
 						<div style="text-align: center;">
-						  	<button type="submit" class="btn btn-orange">Send SMS</button>							
+						  	<button type="button" class="btn btn-orange">Send SMS</button>							
 						</div>
 					</form>
 				</div>				
@@ -102,9 +102,34 @@
 
 	<script>		
 
-		$("#coke-type label").click(function() {
-			$("#coke-type label").removeClass("radio-active");
+		$("#input-coke label").click(function() {
+			$("#input-coke label").removeClass("radio-active");
 			$(this).addClass("radio-active");
+		})
+
+		$("form .btn-orange").click(function() {
+			$.ajax({				
+				type: "post",
+				url: "/send_sms",
+				contentType: "application/json",
+				
+				data: JSON.stringify({
+					phone: $("#input-phone").val(),
+					coke: $("#input-coke input:radio:checked").val(),
+					name: $("#input-name").val(),					
+				}),
+
+				statusCode: {
+					400: function (xhr) {
+						alert(xhr.responseText);
+					}
+				},
+
+				success: function(data, status) {					
+					console.log("SMS sent!");
+				},
+
+			})
 		})
 
 	</script>
