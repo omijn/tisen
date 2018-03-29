@@ -46,7 +46,7 @@ def validate_phone(phone):
 	# match against +xxxxxxxxxx.. (not considering number of digits because it might be different for different countries)
 	if re.match(r"^\+\d+$", stripped_phone):
 		return stripped_phone
-	raise Exception("Invalid phone number format")
+	raise Exception("Invalid phone number format. Did you remember to add the country code prepended with a plus sign?")
 
 def validate_coke(coke):
 	""" Check whether coke type entered is valid """
