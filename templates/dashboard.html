@@ -74,7 +74,8 @@
 				  	<span>
 				    	{{ msg_ask }}
 				    </span>
-				    <button type="button" id="edit1" class="btn btn-orange ml-auto btn-edit">Edit</button>
+				    <button type="button" id="default1" class="btn btn-blue btn-reset ml-auto mr-2">Reset to default</button>
+				    <button type="button" id="edit1" class="btn btn-orange btn-edit">Edit</button>
 				  </div>
 				</div><br>
 
@@ -84,7 +85,8 @@
 				  	<span>
 				    	{{ pos_res }}
 				    </span>
-				    <button type="button" id="edit2" class="btn btn-orange ml-auto btn-edit">Edit</button>
+				    <button type="button" id="default2" class="btn btn-blue btn-reset ml-auto mr-2">Reset to default</button>
+				    <button type="button" id="edit2" class="btn btn-orange btn-edit">Edit</button>
 				  </div>
 				</div><br>
 
@@ -94,7 +96,8 @@
 				  	<span>
 				    	{{ neg_res }}
 				    </span>
-				    <button type="button" id="edit3" class="btn btn-orange ml-auto btn-edit">Edit</button>
+				    <button type="button" id="default3" class="btn btn-blue btn-reset ml-auto mr-2">Reset to default</button>
+				    <button type="button" id="edit3" class="btn btn-orange btn-edit">Edit</button>
 				  </div>
 				</div><br>
 			</div>
@@ -145,9 +148,15 @@
 
 			edit_msg(new_msg, $(this).attr("id").slice(-1))
 			$("#m" + $(this).attr("id").slice(-1) + " span").text(new_msg)
-
-
 		})
+
+		$(".btn-reset").click(function() {
+			var default_messages = ["Hi <firstName>, I saw that your <productType> was delivered. How are you enjoying it so far?", "Great, can you describe what you love most about <productType>?", "I'm sorry to hear that, what do you dislike about <productType>?"];
+			
+			msg_id = $(this).attr("id").slice(-1)
+			edit_msg(default_messages[msg_id - 1], msg_id)						
+			$("#m" + msg_id + " span").text(default_messages[msg_id - 1])
+		})		
 
 		function edit_msg(msg, msg_id) {
 			$.ajax({
