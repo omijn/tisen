@@ -18,6 +18,7 @@ app = Flask(__name__)
 client = MongoClient("localhost", 27017)
 db = client.sensus
 str_col = db.strings
+cust_col = db.customer_products
 
 def get_strings():
 	""" Retrieve the three messages from the DB """
@@ -73,6 +74,9 @@ def send_sms(phone, coke, name, msg=0):
 	    from_="+15012145537",
 	    body=first_msg)
 
+	# save customer phone numbers with product type so that we know what product they ordered when they respond
+	cust_col.update_one({"phone": phone}, {"$set": {"coke": coke}}, upsert=True)
+
 @app.route('/send_sms', methods=['POST'])
 def receive_sms_data():
 	""" Receive form data from dashboard and validate it before sending SMS to user"""
@@ -103,8 +107,7 @@ def detect_sentiment(msg):
 	# call API
 	response = requests.post(sentiment_api_url, headers=headers, json=documents)
 	sentiments = response.json()
-
-	print(sentiments)
+	
 	return sentiments['documents'][0]['score']
 
 
@@ -114,16 +117,26 @@ def receive_user_sms():
 
 	customer_response_data = request.form
 	msg = customer_response_data["Body"]
+	phone = customer_response_data["From"]
+
+	# get coke type associated with a phone number
+	q = cust_col.find_one({"phone": phone})
+	if q != None:
+		coke = q['coke'] + " coke"
+	else:
+		coke = " it"
 
 	# analyze sentiment of user message
 	sentiment_score = detect_sentiment(msg)
 	
 	_, pos_res, neg_res = get_strings()
-
+	
 	resp = MessagingResponse()
 	if sentiment_score >= 0.5:
+		pos_res = re.sub(r"<productType>", coke, pos_res)
 		resp.message(pos_res)
 	else:
+		neg_res = re.sub(r"<productType>", coke, neg_res)
 		resp.message(neg_res)
 
 	return str(resp)
@@ -133,8 +146,7 @@ def edit_msg():
 	msg_mapping = {"1": "first_ask", "2": "pos_res", "3": "neg_res"}
 	edit_req = request.get_json()
 	new_msg = edit_req['new_msg']
-	msg_id = edit_req['id']
-	print(msg_id)
+	msg_id = edit_req['id']	
 	if int(msg_id) not in range(1, 4):
 		return "Invalid message type", 400
 	msg_type = msg_mapping[msg_id]
