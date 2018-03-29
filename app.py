@@ -130,5 +130,14 @@ def receive_user_sms():
 
 @app.route('/edit_msg', methods=["POST"])
 def edit_msg():
+	msg_mapping = {"1": "first_ask", "2": "pos_res", "3": "neg_res"}
 	edit_req = request.get_json()
-	return render_template('dashboard.html', msg_ask="m1", pos_res="m2", neg_res="m3")
+	new_msg = edit_req['new_msg']
+	msg_id = edit_req['id']
+	print(msg_id)
+	if int(msg_id) not in range(1, 4):
+		return "Invalid message type", 400
+	msg_type = msg_mapping[msg_id]
+	str_col.update_one({"msg_type": msg_type}, { "$set": {"msg": new_msg}})
+
+	return "Updated message"

@@ -70,25 +70,31 @@
 			<div class="col-md-8 ml-5 p-5 bg-white">
 				<p>First Automated Message</p>
 				<div class="card">
-				  <div class="card-body d-flex">
-				    {{ msg_ask }}
-				    <button type="button" class="btn btn-orange ml-auto">Edit</button>
+				  <div id="m1" class="card-body d-flex">
+				  	<span>
+				    	{{ msg_ask }}
+				    </span>
+				    <button type="button" id="edit1" class="btn btn-orange ml-auto btn-edit">Edit</button>
 				  </div>
 				</div><br>
 
 				<p>If Positive Response <i class="far fa-smile"></i></p>
 				<div class="card">
-				  <div class="card-body d-flex">
-				    {{ pos_res }}
-				    <button type="button" class="btn btn-orange ml-auto">Edit</button>
+				  <div id="m2" class="card-body d-flex">
+				  	<span>
+				    	{{ pos_res }}
+				    </span>
+				    <button type="button" id="edit2" class="btn btn-orange ml-auto btn-edit">Edit</button>
 				  </div>
 				</div><br>
 
 				<p>If Negative Response <i class="far fa-frown"></i></p>
 				<div class="card">
-				  <div class="card-body d-flex">
-				    {{ neg_res }}
-				    <button type="button" class="btn btn-orange ml-auto">Edit</button>
+				  <div id="m3" class="card-body d-flex">
+				  	<span>
+				    	{{ neg_res }}
+				    </span>
+				    <button type="button" id="edit3" class="btn btn-orange ml-auto btn-edit">Edit</button>
 				  </div>
 				</div><br>
 			</div>
@@ -109,7 +115,7 @@
 
 		$("form .btn-orange").click(function() {
 			$.ajax({				
-				type: "post",
+				type: "POST",
 				url: "/send_sms",
 				contentType: "application/json",
 				
@@ -131,6 +137,39 @@
 
 			})
 		})
+
+		$(".btn-edit").click(function() {
+			var new_msg = prompt("Enter a new message template. Use the strings \"<firstName>\" and \"<productType>\" as placeholders for the customer name and coke type respectively.")
+			if (new_msg == null || new_msg == "")
+				return;
+
+			edit_msg(new_msg, $(this).attr("id").slice(-1))
+			$("#m" + $(this).attr("id").slice(-1) + " span").text(new_msg)
+
+
+		})
+
+		function edit_msg(msg, msg_id) {
+			$.ajax({
+				type: 'POST',
+				url: '/edit_msg',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					new_msg: msg,
+					id: msg_id
+				}),
+
+				statusCode: {
+					400: function (xhr) {
+						alert(xhr.responseText);
+					}
+				},
+
+				success: function(data, status) {
+					console.log(data);
+				}
+			})
+		}
 
 	</script>
 </body>
