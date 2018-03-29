@@ -3,6 +3,10 @@
     background: #caffa0;    
 }
 
+#main-alert {
+    text-align: center;
+}
+
 .card {
     border-radius: 20px;
     -webkit-box-shadow: 7px 7px 26px -5px rgba(128,128,128,1);

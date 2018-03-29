@@ -64,6 +64,11 @@
 						  	<button type="button" class="btn btn-orange">Send SMS</button>							
 						</div>
 					</form>
+
+					<div id="main-alert" class="alert d-none mt-5" role="alert">
+				  		
+					</div>
+
 				</div>				
 			</nav>
 			
@@ -131,11 +136,17 @@
 				statusCode: {
 					400: function (xhr) {
 						alert(xhr.responseText);
+					},
+					500: function () {
+						alert("An internal server error occurred.")
 					}
 				},
 
 				success: function(data, status) {					
-					console.log("SMS sent!");
+					$("#main-alert").removeClass("d-none").addClass("alert-success").text(data)
+					setTimeout(function() {
+						$("#main-alert").addClass("d-none")
+					}, 3000);
 				},
 
 			})
@@ -171,11 +182,17 @@
 				statusCode: {
 					400: function (xhr) {
 						alert(xhr.responseText);
+					},
+					500: function () {
+						alert("An internal server error occurred.")
 					}
 				},
 
 				success: function(data, status) {
-					console.log(data);
+					$("#main-alert").removeClass("d-none").addClass("alert-success").text(data)
+					setTimeout(function() {
+						$("#main-alert").addClass("d-none")
+					}, 3000);
 				}
 			})
 		}

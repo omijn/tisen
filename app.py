@@ -43,8 +43,8 @@ def validate_phone(phone):
 	# remove all spaces, hyphens and parentheses
 	stripped_phone = re.sub(r"[\s()\-]", "", phone)
 
-	# match against +xxxxxxxxxx.. 
-	if re.match(r"\+\d+", stripped_phone):
+	# match against +xxxxxxxxxx.. (not considering number of digits because it might be different for different countries)
+	if re.match(r"^\+\d+$", stripped_phone):
 		return stripped_phone
 	raise Exception("Invalid phone number format")
 
@@ -69,10 +69,10 @@ def send_sms(phone, coke, name, msg=0):
 	client = Client(account_sid, auth_token)
 
 	# send SMS
-	client.api.account.messages.create(
-	    to=phone,
-	    from_="+15012145537",
-	    body=first_msg)
+	try:
+		client.api.account.messages.create(to=phone, from_="+15012145537", body=first_msg)
+	except:
+		raise Exception("There was a problem with the Twilio SMS service. Make sure the phone number you entered is verified, or try again later.")	
 
 	# save customer phone numbers with product type so that we know what product they ordered when they respond
 	cust_col.update_one({"phone": phone}, {"$set": {"coke": coke}}, upsert=True)
@@ -87,11 +87,12 @@ def receive_sms_data():
 		phone = validate_phone(sms_req_data['phone'])		
 		coke = validate_coke(sms_req_data['coke'])
 		name = sms_req_data['name']
+		send_sms(phone, coke, name, msg=0)
+
 	except Exception as e:
 		return e.args[0], 400
-
-	send_sms(phone, coke, name, msg=0)
-	return "SMS sent!"
+	
+	return "SMS successfully sent!"
 
 
 def detect_sentiment(msg):
@@ -152,4 +153,4 @@ def edit_msg():
 	msg_type = msg_mapping[msg_id]
 	str_col.update_one({"msg_type": msg_type}, { "$set": {"msg": new_msg}})
 
-	return "Updated message"
+	return "Updated message!"
