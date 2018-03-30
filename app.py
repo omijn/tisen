@@ -59,8 +59,8 @@ def send_sms(phone, coke, name, msg=0):
 	first_msg, _1, _2 = get_strings()
 
 	# replace placeholders with actual values
-	first_msg = re.sub(r"<firstName>", name, first_msg)
-	first_msg = re.sub(r"<productType>", coke + " coke", first_msg)
+	first_msg = re.sub(r"<firstName>", name, first_msg, flags=re.IGNORECASE)
+	first_msg = re.sub(r"<productType>", coke + " coke", first_msg, flags=re.IGNORECASE)
 
 	# config stuff
 	account_sid = "ACa5c9b62d4e697d295393c8462076e563"
@@ -75,7 +75,7 @@ def send_sms(phone, coke, name, msg=0):
 		raise Exception("There was a problem with the Twilio SMS service. Make sure the phone number you entered is verified, or try again later.")	
 
 	# save customer phone numbers with product type so that we know what product they ordered when they respond
-	cust_col.update_one({"phone": phone}, {"$set": {"coke": coke}}, upsert=True)
+	cust_col.update_one({"phone": re.sub(r"\+1", "", phone)}, {"$set": {"coke": coke}}, upsert=True)
 
 @app.route('/send_sms', methods=['POST'])
 def receive_sms_data():
@@ -122,10 +122,13 @@ def receive_user_sms():
 
 	# get coke type associated with a phone number
 	q = cust_col.find_one({"phone": phone})
+	if q == None:
+		q = cust_col.find_one({"phone": re.sub(r"\+1", "", phone)})
+
 	if q != None:
 		coke = q['coke'] + " coke"
 	else:
-		coke = " it"
+		coke = "it"
 
 	# analyze sentiment of user message
 	sentiment_score = detect_sentiment(msg)
@@ -134,10 +137,10 @@ def receive_user_sms():
 	
 	resp = MessagingResponse()
 	if sentiment_score >= 0.5:
-		pos_res = re.sub(r"<productType>", coke, pos_res)
+		pos_res = re.sub(r"<productType>", coke, pos_res, flags=re.IGNORECASE)
 		resp.message(pos_res)
 	else:
-		neg_res = re.sub(r"<productType>", coke, neg_res)
+		neg_res = re.sub(r"<productType>", coke, neg_res, flags=re.IGNORECASE)
 		resp.message(neg_res)
 
 	return str(resp)
